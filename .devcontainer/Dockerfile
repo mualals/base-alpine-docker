@@ -12,6 +12,14 @@ ARG USER_GID=$USER_UID
 COPY library-scripts/*.sh /tmp/library-scripts/
 RUN apk update && ash /tmp/library-scripts/common-alpine.sh "${INSTALL_ZSH}" "${USERNAME}" "${USER_UID}" "${USER_GID}" && rm -rf /tmp/library-scripts
 
-# ** [Optional] Uncomment this section to install additional packages. **
-# RUN apk update \
-#     && apk add --no-cache <your-package-list-here>
+# Install Docker and Docker Compose
+RUN apk add --no-cache \
+    docker \
+    docker-compose \
+    && rc-update add docker boot
+
+# Switch to non-root user
+USER ${USERNAME}
+
+# (Optional) Set the working directory
+WORKDIR /home/${USERNAME}
